@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scanner Server - Web Vulnerability Scanner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .scan-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-scan {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-scan:hover {
+            background: #764ba2;
+        }
+
+        .btn-scan:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: white;
+            font-size: 18px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .results h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .result-section {
+            margin-bottom: 25px;
+        }
+
+        .result-section h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-card strong {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .info-card span {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .files-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .file-item.safe {
+            background: #d4edda;
+            border-left-color: #28a745;
+        }
+
+        .file-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .open-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 0.85em;
+            transition: background 0.2s;
+        }
+
+        .open-link:hover {
+            background: #764ba2;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #28a745;
+            color: white !important;
+        }
+
+        .badge-warning {
+            background: #ffc107;
+            color: #333 !important;
+        }
+
+        .badge-danger {
+            background: #dc3545;
+            color: white !important;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Scanner Server</h1>
+            <p>Web Vulnerability Scanner</p>
+        </div>
+
+        <div class="scan-form">
+            <form id="scanForm">
+                <div class="form-group">
+                    <label for="urlInput">Website URL to Scan</label>
+                    <input
+                        type="text"
+                        id="urlInput"
+                        name="url"
+                        placeholder="https://example.com/login.aspx"
+                        required
+                    >
+                </div>
+                <button type="submit" class="btn-scan" id="btnScan">
+                    Start Scan
+                </button>
+            </form>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Scanning website... Please wait.</p>
+        </div>
+
+        <div class="results" id="results">
+            <h2>📊 Scan Results</h2>
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('scanForm');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+        const btnScan = document.getElementById('btnScan');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const url = document.getElementById('urlInput').value;
+
+            // Mostra loading
+            loading.classList.add('active');
+            results.classList.remove('active');
+            btnScan.disabled = true;
+
+            try {
+                const response = await fetch(`/ScanApp?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+
+                // Esconde loading
+                loading.classList.remove('active');
+                btnScan.disabled = false;
+
+                // Mostra resultados
+                displayResults(data);
+                results.classList.add('active');
+
+            } catch (error) {
+                loading.classList.remove('active');
+                btnScan.disabled = false;
+                resultsContent.innerHTML = `
+                    <div class="error-message">
+                        <strong>Scan Error:</strong> ${error.message}
+                    </div>
+                `;
+                results.classList.add('active');
+            }
+        });
+
+        function displayResults(data) {
+            let html = '';
+
+            // Determina se o scan foi bem-sucedido
+            const scanSuccess = data.ServerInfo && data.ServerInfo.success;
+            const statusBadge = scanSuccess
+                ? '<span class="badge badge-success">Completed</span>'
+                : '<span class="badge badge-danger">Failed</span>';
+
+            // Badge Genexus para o Scanned URL
+            let genexusBadge = '';
+            if (data.ServerInfo && data.ServerInfo.is_genexus === true) {
+                genexusBadge = '<br><span style="color: #4CAF50; font-weight: bold; margin-top: 5px; display: inline-block;">⚡ Genexus</span>';
+            } else if (data.ServerInfo && data.ServerInfo.is_genexus === false) {
+                genexusBadge = '<br><span style="color: #ff9800; font-weight: bold; margin-top: 5px; display: inline-block;">⚠️ Não identificado como Genexus</span>';
+            }
+
+            // Basic Information
+            html += `
+                <div class="result-section">
+                    <h3>General Information</h3>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <strong>Scan ID</strong>
+                            <span>${data.ID}</span>
+                        </div>
+                        <div class="info-card">
+                            <strong>Scanned URL</strong>
+                            <span>${data.URL}${genexusBadge}</span>
+                        </div>
+                        <div class="info-card">
+                            <strong>Status</strong>
+                            ${statusBadge}
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <strong>Description</strong>
+                        <span>${data.Description}</span>
+                    </div>
+                </div>
+            `;
+
+            // Server Information
+            if (data.ServerInfo && data.ServerInfo.success) {
+                html += `
+                    <div class="result-section">
+                        <h3>🖥️ Server Information</h3>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <strong>Server Type</strong>
+                                <span>${data.ServerInfo.server_type}</span>
+                            </div>
+                            <div class="info-card">
+                                <strong>Server Header</strong>
+                                <span>${data.ServerInfo.server_header}</span>
+                            </div>
+                            <div class="info-card">
+                                <strong>Status Code</strong>
+                                <span>${data.ServerInfo.status_code}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (data.ServerInfo && !data.ServerInfo.success) {
+                html += `
+                    <div class="result-section">
+                        <h3>🖥️ Server Information</h3>
+                        <div class="error-message">
+                            <strong>Error:</strong> ${data.ServerInfo.error}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Exposed Files
+            if (data.FilesInfo && data.FilesInfo.success) {
+                const foundCount = data.FilesInfo.found_count;
+                const totalChecked = data.FilesInfo.total_checked;
+                const rootUrl = data.FilesInfo.root_url || data.FilesInfo.base_url;
+
+                html += `
+                    <div class="result-section">
+                        <h3>📁 Sensitive Files</h3>
+                        <div style="color: #666; font-size: 0.9em; margin-bottom: 10px;">
+                            🔍 Verificando arquivos em: <strong>${rootUrl}</strong>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <strong>Files Checked</strong>
+                                <span>${totalChecked}</span>
+                            </div>
+                            <div class="info-card">
+                                <strong>Exposed Files</strong>
+                                <span class="badge ${foundCount > 0 ? 'badge-danger' : 'badge-success'}">
+                                    ${foundCount}
+                                </span>
+                            </div>
+                        </div>
+                `;
+
+                if (foundCount > 0) {
+                    html += '<h4 style="color: #dc3545; margin-top: 20px;">⚠️ Exposed Files Found:</h4>';
+                    html += '<div class="files-list">';
+                    data.FilesInfo.found_files.forEach(file => {
+                        html += `
+                            <div class="file-item">
+                                <div class="file-item-header">
+                                    <strong>${file.filename}</strong>
+                                    <a href="${file.url}" target="_blank" class="open-link" title="Open in new tab">
+                                        🔗 Open
+                                    </a>
+                                </div>
+                                <small>URL: ${file.url}</small><br>
+                                <small>Status: ${file.status_code} | Type: ${file.content_type}</small>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                } else {
+                    html += `
+                        <div class="file-item safe">
+                            <strong>✅ No sensitive files exposed were found!</strong>
+                        </div>
+                    `;
+                }
+
+                html += '</div>';
+            }
+
+            resultsContent.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+# Lista de arquivos sensíveis para verificar
+# Adicione um arquivo por linha
+# Linhas começando com # são ignoradas
+#
+# MARCAÇÃO ESPECIAL [GXGRAL_RELATED]:
+# - Arquivos marcados com [GXGRAL_RELATED] serão buscados automaticamente
+#   na mesma pasta onde o arquivo gxgral.js for encontrado
+# - Exemplo: developermenu.html [GXGRAL_RELATED]
+# - Útil para arquivos Genexus que geralmente estão na mesma pasta
+
+# ==================================================================================================================
+# .NET CORE / ASP.NET CORE
+# ==================================================================================================================
+
+# Arquivos de configuração .NET
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Staging.json
+web.config
+applicationhost.config
+launchSettings.json
+
+# Arquivos de conexão e secrets .NET
+#connectionstrings.config
+#secrets.json
+#user-secrets.json
+
+# Arquivos de desenvolvimento .NET
+#.vs/config/applicationhost.config
+
+# Arquivos de publicação .NET
+publish.xml
+#FolderProfile.pubxml
+#Release.pubxml
+#Debug.pubxml
+#FolderProfile.pubxml.user
+#Release.pubxml.user
+
+# Arquivos de banco de dados .NET
+#database.mdf
+#app.mdf
+#data.mdf
+#database.ldf
+#app.ldf
+#data.ldf
+
+# ==================================================================================================================
+# JAVA / SPRING BOOT / JAKARTA EE
+# ==================================================================================================================
+
+# Arquivos de configuração Spring Boot
+#application.properties
+#application.yml
+#application-dev.properties
+#application-dev.yml
+#application-prod.properties
+#application-prod.yml
+#application-test.properties
+#application-test.yml
+#bootstrap.properties
+#bootstrap.yml
+
+# Arquivos de configuração Java EE / Jakarta EE
+#persistence.xml
+#web.xml
+#context.xml
+#server.xml
+#tomcat-users.xml
+#catalina.properties
+#catalina.policy
+
+# Arquivos de configuração Hibernate
+#hibernate.cfg.xml
+#hibernate.properties
+
+# Arquivos de log Java
+#catalina.out
+#localhost.log
+#application.log
+#spring.log
+
+# Arquivos de build Java
+#pom.xml
+#build.gradle
+#gradle.properties
+#settings.gradle
+#build.xml
+
+# Arquivos de deployment Java
+#MANIFEST.MF
+#app.war
+#application.war
+#ROOT.war
+#admin.war
+#app.ear
+#application.ear
+#app.jar
+#application.jar
+#lib.jar
+
+# Arquivos de configuração Maven
+#settings.xml
+#.m2/settings.xml
+
+# ==================================================================================================================
+# ARQUIVOS GENÉRICOS PERIGOSOS
+# ==================================================================================================================
+
+# Arquivos de ambiente
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Arquivos de configuração gerais
+config.json
+settings.json
+configuration.json
+database.yml
+credentials.json
+
+# Arquivos Git
+#.git/config
+#.gitconfig
+#.git/HEAD
+#.git-credentials
+
+# Arquivos de dependências
+#composer.json
+#composer.lock
+#package.json
+#package-lock.json
+#yarn.lock
+#requirements.txt
+#Pipfile
+#Pipfile.lock
+
+# Arquivos PHP
+#phpinfo.php
+#info.php
+#test.php
+#admin.php
+#wp-config.php
+#config.php
+
+# Arquivos de backup
+#backup.sql
+#dump.sql
+#database.sql
+#db.sql
+#web.config.bak
+#appsettings.json.bak
+#database.bak
+#backup.bak
+#site.bak
+#index.bak
+#web.config.backup
+#appsettings.json.backup
+#database.backup
+#site.backup
+#web.config.old
+#appsettings.json.old
+#database.old
+#3site.old
+#index.old
+#web.config.copy
+#appsettings.json.copy
+#database.copy
+#site.copy
+
+# Arquivos de servidor web
+#.htaccess
+#.htpasswd
+#nginx.conf
+#httpd.conf
+#apache2.conf
+
+# Arquivos de documentação/informação
+#robots.txt
+#sitemap.xml
+#README.md
+#CHANGELOG.md
+
+# Arquivos de sistema
+#.DS_Store
+#Thumbs.db
+#desktop.ini
+
+# Arquivos de IDE
+#.idea/
+#.vscode/settings.json
+#.vs/solution.suo
+#web.config.user
+#app.config.user
+
+# Arquivos de certificados e chaves
+#server.pem
+#cert.pem
+#key.pem
+#private.pem
+#server.key
+#private.key
+#ssl.key
+#cert.key
+#server.crt
+#ssl.crt
+#cert.crt
+#ca.crt
+#server.cer
+#ssl.cer
+#cert.cer
+#cert.p12
+#keystore.p12
+#cert.pfx
+#ssl.pfx
+#server.pfx
+#id_rsa
+#id_rsa.pub
+
+# Arquivos de sessão e cache
+#.session
+#.cache
+#upload.tmp
+#temp.tmp
+#cache.tmp
+#session.tmp
+
+# ==================================================================================================================
+# ARQUIVOS GENEXUS
+# ==================================================================================================================
+
+# Arquivos Genexus .NET
+# NOTA: Arquivos marcados com [GXGRAL_RELATED] serão buscados automaticamente
+# na mesma pasta onde gxgral.js for encontrado
+
+developermenu.html [GXGRAL_RELATED]
+developermenu.xml [GXGRAL_RELATED]
+CloudServices.config [GXGRAL_RELATED]
